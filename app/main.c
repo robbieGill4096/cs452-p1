@@ -90,11 +90,13 @@ int main(int argc, char *argv[])
             
         }
       if (strncmp(line, "history", 7) == 0) {
-           
+             register HIST_ENTRY **the_list;
+          register int i;
 
-            printf("history");
-           
-            
+          the_list = history_list ();
+          if (the_list)
+            for (i = 0; the_list[i]; i++)
+              printf ("%d: %s\n", i + history_base, the_list[i]->line);
         }
 
       if (strncmp(line, "cd", 2) == 0) {
