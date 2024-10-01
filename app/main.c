@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
             char cwd[1024];
                 if (getcwd(cwd, sizeof(cwd)) != NULL) {
                     printf("%s\n", cwd);
+                    //printf("TEst pwd value: %s",getcwd(NULL,0));
                 } else {
                     perror("getcwd() error");
                 }
@@ -101,37 +102,20 @@ int main(int argc, char *argv[])
 
       if (strncmp(line, "cd", 2) == 0) {
 
-        char *dir = strtok(line, " ");
-        dir = strtok(NULL, " ");  // Get the directory
-           
-        change_dir(dir);
-     
+        //char *dir = strtok(line, " "); functioning code
+        //dir = strtok(NULL, " ");  // Get the directory functioning code
+        //change_dir(dir); functioning code
+         
+         char **cmd = cmd_parse(line);
+         
+        printf("Path: %s\n", cmd[0]);
+        printf("Path: %s\n", cmd[1]);
+        change_dir(cmd);
 
-          //      //struct passwd *pw = getpwuid(getuid());
-          //          // dir = pw->pw_dir;
-          //           //dir = pw->pw_dir;
-          //     //printf("no argumetn passed%s,",dir);
-              
-          //   }
-          //   //check for valid path? 
-          //   if (chdir(dir) != 0) {
-          //       //perror("cd");
-          //       chdir(dir);
-          //   } else { //the directory call is valid so now we execute
+        }
+      if (strncmp(line, "jobs", 4) == 0) {
 
-          //      char cwd[1024];
-          //       if (getcwd(cwd, sizeof(cwd)) != NULL) {
-          //           printf("Changed directory to: %s\n", cwd);
-          //       } else {
-          //           perror("getcwd() error");
-          //       }
-
-          //   }
-
-
-
-          //   //if second argument found change to taht directory 
-
+        printf("JObs command run");
 
         }
      

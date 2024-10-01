@@ -5,6 +5,7 @@
         "history.h": "c",
         "readline.h": "c",
         "lab.h": "c",
-        "cerrno": "c"
+        "cerrno": "c",
+        "pwd.h": "c"
     }
 }

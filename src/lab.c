@@ -2,7 +2,8 @@
 #include <string.h>
 #include "../src/lab.h"
 #include <errno.h>
-
+#include <ctype.h>
+#include <pwd.h>
 // char **cmd_parse(char const *line){
     
 // }
@@ -30,13 +31,7 @@
    * @return const char* The prompt
    */
  char *get_prompt(const char *env){
-    //     char *prompt = getenv(env);
-    //      if (prompt == NULL) {
-    //     prompt = "shell>";  // Default prompt
-    //     return prompt;
-    // }
-        
-    // return prompt;
+    
     char *prompt = getenv(env);
     //check if no custom shell design is given
     if(prompt == NULL){
@@ -51,6 +46,7 @@
         return prompt;
     }
 
+    return prompt;
  }
 
 /**
@@ -64,18 +60,22 @@
    */
  
 int change_dir(char **dir) {
-    //dir = strtok(NULL, " "); 
-   //printf(dir);
-    //case to get home no args
-          if (!dir){ 
+    char *path = NULL;
+    if (dir[1] != NULL) {
+        path = dir[1]; 
+    }
+   
+
+    const char *home = NULL;
+          if (!path){ 
             //get env then cd home
-            const char *home = getenv("HOME");
+            home = getenv("HOME");
 
             //check if getting home path failed
             if (home == NULL) {
-            struct passwd *pw = getpwuid(getuid());
-            //home = pw->pw_dir;
-           
+                struct passwd *pw = getpwuid(getuid());
+                home = pw->pw_dir;
+                chdir(home);
             }
 
 
@@ -89,7 +89,10 @@ int change_dir(char **dir) {
 
             //printf("args case");
            //try to run args if it fails return error
-           if (chdir(dir) != 0 ) {
+
+           //need to fix dir so it only passes *dir 
+
+           if (chdir(path) != 0 ) {
               errno = ENOENT;
               return -1;}
 
@@ -126,7 +129,7 @@ int change_dir(char **dir) {
     // Make a writable copy of the line
     char *line_copy = strdup(line);
     if (line_copy == NULL) {
-        
+        free(cmd);
         return NULL;
     }
 
@@ -139,7 +142,7 @@ int change_dir(char **dir) {
         i++;
     }
     cmd[i] = NULL;  // Null-terminate the argument array
-
+    
     free(line_copy);  // Free the copy of the input line after tokenization
     return cmd;
 }
@@ -192,54 +195,54 @@ int change_dir(char **dir) {
   }
 
 
-  /**
-   * @brief Takes an argument list and checks if the first argument is a
-   * built in command such as exit, cd, jobs, etc. If the command is a
-   * built in command this function will handle the command and then return
-   * true. If the first argument is NOT a built in command this function will
-   * return false.
-   *
-   * @param sh The shell
-   * @param argv The command to check
-   * @return True if the command was a built in command
-   */
-  bool do_builtin(struct shell *sh, char **argv){
-    return true;
+  // /**
+  //  * @brief Takes an argument list and checks if the first argument is a
+  //  * built in command such as exit, cd, jobs, etc. If the command is a
+  //  * built in command this function will handle the command and then return
+  //  * true. If the first argument is NOT a built in command this function will
+  //  * return false.
+  //  *
+  //  * @param sh The shell
+  //  * @param argv The command to check
+  //  * @return True if the command was a built in command
+  //  */
+  // bool do_builtin(struct shell *sh, char **argv){
+  //   return true;
 
-  }
+  // }
 
-  /**
-   * @brief Initialize the shell for use. Allocate all data structures
-   * Grab control of the terminal and put the shell in its own
-   * process group. NOTE: This function will block until the shell is
-   * in its own program group. Attaching a debugger will always cause
-   * this function to fail because the debugger maintains control of
-   * the subprocess it is debugging.
-   *
-   * @param sh
-   */
-  void sh_init(struct shell *sh);
+  // /**
+  //  * @brief Initialize the shell for use. Allocate all data structures
+  //  * Grab control of the terminal and put the shell in its own
+  //  * process group. NOTE: This function will block until the shell is
+  //  * in its own program group. Attaching a debugger will always cause
+  //  * this function to fail because the debugger maintains control of
+  //  * the subprocess it is debugging.
+  //  *
+  //  * @param sh
+  //  */
+  // void sh_init(struct shell *sh);
 
-  /**
-   * @brief Destroy shell. Free any allocated memory and resources and exit
-   * normally.
-   *
-   * @param sh
-   */
-  void sh_destroy(struct shell *sh){
+  // /**
+  //  * @brief Destroy shell. Free any allocated memory and resources and exit
+  //  * normally.
+  //  *
+  //  * @param sh
+  //  */
+  // void sh_destroy(struct shell *sh){
 
 
-  }
+  // }
 
-  /**
-   * @brief Parse command line args from the user when the shell was launched
-   *
-   * @param argc Number of args
-   * @param argv The arg array
-   */
-  void parse_args(int argc, char **argv){
-    //parse the arguments
+  // /**
+  //  * @brief Parse command line args from the user when the shell was launched
+  //  *
+  //  * @param argc Number of args
+  //  * @param argv The arg array
+  //  */
+  // void parse_args(int argc, char **argv){
+  //   //parse the arguments
 
-  }
+  // }
 
 
