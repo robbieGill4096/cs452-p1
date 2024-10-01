@@ -3,6 +3,8 @@
         "stdlib.h": "c",
         "unistd.h": "c",
         "history.h": "c",
-        "readline.h": "c"
+        "readline.h": "c",
+        "lab.h": "c",
+        "cerrno": "c"
     }
 }
