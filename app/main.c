@@ -10,36 +10,19 @@
 //void print_version() {
   //  printf("Shell version %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
 //}
-void retr_cwd() {
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("Current directory: %s\n", cwd);  // Print the current working directory
-    } else {
-        perror("getcwd");
-    }
-}
 
 int main(int argc, char *argv[])
 {
-  //printf("hellod world\n");
- // char *my_prompt = getenv("MY_PROMPT"); //added to grab the user prompt Task5
+  struct shell shell;
+  sh_init(&shell);
+  //sh_destroy(&shell);
 
-  //if (my_prompt == NULL) {
-  //      my_prompt = "Shell>";  // Default prompt
-   // }
 
-  //struct shell my_shell;
   char *my_prompt = get_prompt("MY_PROMPT");
-
   //int opt;
-
   //parse the command line args like print version
   parse_args(argc,argv);
-    
 
-    //catch case of invalid flags
-
-  //
   char *line;
   using_history();
 
@@ -51,6 +34,7 @@ int main(int argc, char *argv[])
       //cd -use env for current directory
       //history command
 
+     
      if (strncmp(line, "exit", 4) == 0) {
             int exit_status = 0;  // Default exit status is 0 (normal exit)
 
@@ -91,8 +75,8 @@ int main(int argc, char *argv[])
          
          char **cmd = cmd_parse(line);
          
-        printf("Path: %s\n", cmd[0]);
-        printf("Path: %s\n", cmd[1]);
+        //printf("Path: %s\n", cmd[0]);
+        //printf("Path: %s\n", cmd[1]);
         change_dir(cmd);
 
         }

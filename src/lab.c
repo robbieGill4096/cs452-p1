@@ -5,6 +5,12 @@
 #include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
+
+char *line = NULL;
+int history_base = 1;
 // char **cmd_parse(char const *line){
     
 // }
@@ -196,33 +202,107 @@ int change_dir(char **dir) {
   }
 
 
-  // /**
-  //  * @brief Takes an argument list and checks if the first argument is a
-  //  * built in command such as exit, cd, jobs, etc. If the command is a
-  //  * built in command this function will handle the command and then return
-  //  * true. If the first argument is NOT a built in command this function will
-  //  * return false.
-  //  *
-  //  * @param sh The shell
-  //  * @param argv The command to check
-  //  * @return True if the command was a built in command
-  //  */
-  // bool do_builtin(struct shell *sh, char **argv){
-  //   return true;
+  /**
+   * @brief Takes an argument list and checks if the first argument is a
+   * built in command such as exit, cd, jobs, etc. If the command is a
+   * built in command this function will handle the command and then return
+   * true. If the first argument is NOT a built in command this function will
+   * return false.
+   *
+   * @param sh The shell
+   * @param argv The command to check
+   * @return True if the command was a built in command
+   */
+  bool do_builtin(struct shell *sh, char **argv){
+    if (argv[0] == NULL) {
+        return false;  // No command to process
+    }
 
-  // }
+    if (strcmp(argv[0], "exit") == 0) {
+        free(line);
+        exit(0);  // Exit the shell
+    }
 
-  // /**
-  //  * @brief Initialize the shell for use. Allocate all data structures
-  //  * Grab control of the terminal and put the shell in its own
-  //  * process group. NOTE: This function will block until the shell is
-  //  * in its own program group. Attaching a debugger will always cause
-  //  * this function to fail because the debugger maintains control of
-  //  * the subprocess it is debugging.
-  //  *
-  //  * @param sh
-  //  */
-  // void sh_init(struct shell *sh);
+    if (strncmp(line, "pwd", 3) == 0) {
+        char cwd[1024];
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            printf("%s\n", cwd);
+        } else {
+            perror("getcwd() error");
+        }
+    }
+
+    if (strncmp(line, "history", 7) == 0) {
+        register HIST_ENTRY **the_list;
+        register int i;
+
+        the_list = history_list();
+        if (the_list) {
+            for (i = 0; the_list[i]; i++) {
+                printf("%d: %s\n", i + history_base, the_list[i]->line);
+            }
+        }
+    }
+
+    if (strncmp(line, "cd", 2) == 0) {
+        char **cmd = cmd_parse(line);
+        if (cmd[1] == NULL) {
+            char *home = getenv("HOME");
+            if (home == NULL) {
+                struct passwd *pw = getpwuid(getuid());
+                home = pw->pw_dir;
+            }
+            change_dir(&home);
+        } else {
+            change_dir(&cmd[1]);
+        }
+        cmd_free(cmd);
+    }
+
+    return true;
+}
+
+  /**
+   * @brief Initialize the shell for use. Allocate all data structures
+   * Grab control of the terminal and put the shell in its own
+   * process group. NOTE: This function will block until the shell is
+   * in its own program group. Attaching a debugger will always cause
+   * this function to fail because the debugger maintains control of
+   * the subprocess it is debugging.
+   *
+   * @param sh
+   */
+  void sh_init(struct shell *sh){// Check if the shell is interactive
+    sh->shell_is_interactive = isatty(STDIN_FILENO);
+
+    // Set the process group ID
+    sh->shell_pgid = getpid();
+
+    // Set the terminal file descriptor
+    sh->shell_terminal = STDIN_FILENO;
+
+    // Initialize terminal modes
+    if (tcgetattr(sh->shell_terminal, &sh->shell_tmodes) == -1) {
+        perror("tcgetattr");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set the shell prompt
+    sh->prompt = strdup("my_shell> ");
+    if (sh->prompt == NULL) {
+        perror("strdup");
+        exit(EXIT_FAILURE);
+    }
+
+    // Put the shell in its own process group
+    if (setpgid(sh->shell_pgid, sh->shell_pgid) < 0) {
+        perror("setpgid");
+        exit(EXIT_FAILURE);
+    }
+
+    // Grab control of the terminal
+    tcsetpgrp(sh->shell_terminal, sh->shell_pgid);
+}
 
   // /**
   //  * @brief Destroy shell. Free any allocated memory and resources and exit
@@ -230,10 +310,14 @@ int change_dir(char **dir) {
   //  *
   //  * @param sh
   //  */
-  // void sh_destroy(struct shell *sh){
-
-
-  // }
+   void sh_destroy(struct shell *sh){
+    // Free the allocated prompt
+    if (sh->prompt != NULL) {
+        free(sh->prompt);
+        sh->prompt = NULL;  // Set to NULL to avoid dangling pointer
+        //printf("shell destroyed");
+    }
+}
 
   /**
    * @brief Parse command line args from the user when the shell was launched
