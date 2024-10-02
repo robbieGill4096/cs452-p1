@@ -213,54 +213,53 @@ int change_dir(char **dir) {
    * @param argv The command to check
    * @return True if the command was a built in command
    */
-  bool do_builtin(struct shell *sh, char **argv){
-    if (argv[0] == NULL) {
-        return false;  // No command to process
-    }
+//   bool do_builtin(struct shell *sh, char **argv){
+//     if (argv[0] == NULL) {
+//         return false;  // No command to process
+//     }
 
-    if (strcmp(argv[0], "exit") == 0) {
-        free(line);
-        exit(0);  // Exit the shell
-    }
+//     if (strcmp(argv[0], "exit") == 0) {
+//         free(line);
+//         exit(0);  // Exit the shell
+//     }
 
-    if (strncmp(line, "pwd", 3) == 0) {
-        char cwd[1024];
-        if (getcwd(cwd, sizeof(cwd)) != NULL) {
-            printf("%s\n", cwd);
-        } else {
-            perror("getcwd() error");
-        }
-    }
+//     if (strncmp(line, "pwd", 3) == 0) {
+//         char cwd[1024];
+//         if (getcwd(cwd, sizeof(cwd)) != NULL) {
+//             printf("%s\n", cwd);
+//         } else {
+//             perror("getcwd() error");
+//         }
+//     }
 
-    if (strncmp(line, "history", 7) == 0) {
-        register HIST_ENTRY **the_list;
-        register int i;
+//     if (strncmp(line, "history", 7) == 0) {
+//         register HIST_ENTRY **the_list;
+//         register int i;
 
-        the_list = history_list();
-        if (the_list) {
-            for (i = 0; the_list[i]; i++) {
-                printf("%d: %s\n", i + history_base, the_list[i]->line);
-            }
-        }
-    }
+//         the_list = history_list();
+//         if (the_list) {
+//             for (i = 0; the_list[i]; i++) {
+//                 printf("%d: %s\n", i + history_base, the_list[i]->line);
+//             }
+//         }
+//     }
 
-    if (strncmp(line, "cd", 2) == 0) {
-        char **cmd = cmd_parse(line);
-        if (cmd[1] == NULL) {
-            char *home = getenv("HOME");
-            if (home == NULL) {
-                struct passwd *pw = getpwuid(getuid());
-                home = pw->pw_dir;
-            }
-            change_dir(&home);
-        } else {
-            change_dir(&cmd[1]);
-        }
-        cmd_free(cmd);
-    }
+//     if (strncmp(line, "cd", 2) == 0){
 
-    return true;
-}
+//         //char *dir = strtok(line, " "); functioning code
+//         //dir = strtok(NULL, " ");  // Get the directory functioning code
+//         //change_dir(dir); functioning code
+         
+//          char **cmd = cmd_parse(line);
+         
+//         //printf("Path: %s\n", cmd[0]);
+//         //printf("Path: %s\n", cmd[1]);
+//         change_dir(cmd);
+
+//         }
+
+//     return true;
+// }
 
   /**
    * @brief Initialize the shell for use. Allocate all data structures
@@ -355,4 +354,5 @@ int change_dir(char **dir) {
 
 void print_version() {
     printf("Shell version %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
+    
 }

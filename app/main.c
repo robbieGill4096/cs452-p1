@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
   struct shell shell;
   sh_init(&shell);
-  //sh_destroy(&shell);
+  sh_destroy(&shell);
 
 
   char *my_prompt = get_prompt("MY_PROMPT");
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   using_history();
 
   while ((line=readline(my_prompt))){ // change so that reads getEnv to select the symbol or string
-      
+      add_history(line);
       //user command prompts go here
       //Task 6
       //Exit
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
             // Need case for non-normal exit nonzero
 
             free(line);  // Clean up before exiting
-            printf("freeing prompt");
+            //printf("freeing prompt");
             free(my_prompt);
             return exit_status;
         }
@@ -88,9 +88,10 @@ int main(int argc, char *argv[])
      
       
       //printf("%s\n",line);
-      add_history(line);
+      //add_history(line);
       //printf("%s\n",cwd);
       free(line);
+      
       
   }
   printf("freeing prompt");

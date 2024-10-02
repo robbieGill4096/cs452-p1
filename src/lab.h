@@ -21,7 +21,7 @@ extern "C"
     pid_t shell_pgid;
     struct termios shell_tmodes;
     int shell_terminal;
-    char *prompt;
+    char *prompt; //$ , shell> 
   };
 
 
