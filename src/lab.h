@@ -120,7 +120,11 @@ extern "C"
    */
   void parse_args(int argc, char **argv);
 
-
+/**
+ * 
+ * @brief prints the current version of the shell
+ */
+  void print_version();
 
 #ifdef __cplusplus
 } // extern "C"

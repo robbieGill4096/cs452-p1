@@ -7,9 +7,9 @@
 //step 4 code
 #include <readline/readline.h>
 #include <readline/history.h>
-void print_version() {
-    printf("Shell version %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
-}
+//void print_version() {
+  //  printf("Shell version %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
+//}
 void retr_cwd() {
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -27,32 +27,15 @@ int main(int argc, char *argv[])
   //if (my_prompt == NULL) {
   //      my_prompt = "Shell>";  // Default prompt
    // }
+
+  //struct shell my_shell;
   char *my_prompt = get_prompt("MY_PROMPT");
 
-  int opt;
+  //int opt;
 
-  while ((opt=getopt(argc,argv, "vbc:")) != -1)
-    switch(opt){
-
-      case 'v':
-        print_version(); 
-        break;
-      case 'b':
-        printf("get b here");
-        break;
-      case 'c':
-        printf("get c here");
-        break;
-      case 'd':
-        printf("get d here");
-        break;
-      case '?':
-        printf("? here");
-        break;
-      default:
-        //printf("default case");
-        break;
-    }
+  //parse the command line args like print version
+  parse_args(argc,argv);
+    
 
     //catch case of invalid flags
 

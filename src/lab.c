@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <pwd.h>
+#include <stdio.h>
 // char **cmd_parse(char const *line){
     
 // }
@@ -234,15 +235,40 @@ int change_dir(char **dir) {
 
   // }
 
-  // /**
-  //  * @brief Parse command line args from the user when the shell was launched
-  //  *
-  //  * @param argc Number of args
-  //  * @param argv The arg array
-  //  */
-  // void parse_args(int argc, char **argv){
-  //   //parse the arguments
+  /**
+   * @brief Parse command line args from the user when the shell was launched
+   *
+   * @param argc Number of args
+   * @param argv The arg array
+   */
+  void parse_args(int argc, char **argv){
+    //parse the arguments
+    int opt;
+    while ((opt=getopt(argc,argv, "vbc:")) != -1)
+    switch(opt){
 
-  // }
+      case 'v':
+        print_version(); 
+        break;
+      case 'b':
+        printf("get b here");
+        break;
+      case 'c':
+        printf("get c here");
+        break;
+      case 'd':
+        printf("get d here");
+        break;
+      case '?':
+        printf("? here");
+        break;
+      default:
+        //printf("default case");
+        break;
+    }
 
+  }
 
+void print_version() {
+    printf("Shell version %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
+}
