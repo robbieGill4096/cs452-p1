@@ -400,7 +400,17 @@ queue_t queue_init(int capacity) {
  *
  * @param q a queue to free
  */
-void queue_destroy(queue_t q){}
+void queue_destroy(queue_t q){
+    if (q == NULL) return;
+
+    free(q->data);
+    pthread_mutex_destroy(&q->lock);
+    pthread_cond_destroy(&q->not_empty);
+    pthread_cond_destroy(&q->not_full);
+    free(q);
+
+
+}
 
 /**
  * @brief Adds an element to the back of the queue
@@ -408,14 +418,60 @@ void queue_destroy(queue_t q){}
  * @param q the queue
  * @param data the data to add
  */
-void enqueue(queue_t q, void *data){}
+void enqueue(queue_t q, void *data){
+    pthread_mutex_lock(&q->lock);
+
+    // Wait until there is space in the queue or the queue is shutdown
+    while (q->size == q->capacity && !q->shutdown) {
+        pthread_cond_wait(&q->not_full, &q->lock);
+    }
+
+    // If the queue is shutdown, do not add the data
+    if (q->shutdown) {
+        pthread_mutex_unlock(&q->lock);
+        return;
+    }
+
+    // Add the data to the rear of the queue
+    q->rear = (q->rear + 1) % q->capacity;
+    q->data[q->rear] = data;
+    q->size++;
+
+    // Signal that the queue is not empty
+    pthread_cond_signal(&q->not_empty);
+    pthread_mutex_unlock(&q->lock);
+}
 
 /**
  * @brief Removes the first element in the queue.
  *
  * @param q the queue
  */
-void *dequeue(queue_t q){}
+void *dequeue(queue_t q) {
+    pthread_mutex_lock(&q->lock);
+
+    // Wait until there is an element in the queue or the queue is shutdown
+    while (q->size == 0 && !q->shutdown) {
+        pthread_cond_wait(&q->not_empty, &q->lock);
+    }
+
+    // If the queue is shutdown and empty, return NULL
+    if (q->shutdown && q->size == 0) {
+        pthread_mutex_unlock(&q->lock);
+        return NULL;
+    }
+
+    // Remove the data from the front of the queue
+    void *data = q->data[q->front];
+    q->front = (q->front + 1) % q->capacity;
+    q->size--;
+
+    // Signal that the queue is not full
+    pthread_cond_signal(&q->not_full);
+    pthread_mutex_unlock(&q->lock);
+
+    return data;
+}
 
 /**
  * @brief Set the shutdown flag in the queue so all threads can
@@ -423,21 +479,34 @@ void *dequeue(queue_t q){}
  *
  * @param q The queue
  */
-void queue_shutdown(queue_t q){}
-
+void queue_shutdown(queue_t q) {
+    pthread_mutex_lock(&q->lock);
+    q->shutdown = true;
+    pthread_cond_broadcast(&q->not_empty);
+    pthread_cond_broadcast(&q->not_full);
+    pthread_mutex_unlock(&q->lock);
+}
 /**
  * @brief Returns true is the queue is empty
  *
  * @param q the queue
  */
-bool is_empty(queue_t q){}
+bool is_empty(queue_t q) {
+    pthread_mutex_lock(&q->lock);
+    bool empty = (q->size == 0);
+    pthread_mutex_unlock(&q->lock);
+    return empty;
+}
 
 /**
  * @brief
  *
  * @param q The queue
  */
-bool is_shutdown(queue_t q){}
-
-
+bool is_shutdown(queue_t q) {
+    pthread_mutex_lock(&q->lock);
+    bool shutdown = q->shutdown;
+    pthread_mutex_unlock(&q->lock);
+    return shutdown;
+}
 
