@@ -3,6 +3,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+
+/**My added imports **/
+#include <sys/types.h> // Include for pid_t
+#include <termios.h>
+#define lab_VERSION_MAJOR 1
+#define lab_VERSION_MINOR 0
+
+
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -64,6 +73,21 @@ extern "C"
      * @param q The queue
      */
     bool is_shutdown(queue_t q);
+
+
+/**
+     * @brief Definition of the shell structure
+     */
+struct shell {
+    int shell_is_interactive;
+    pid_t shell_pgid;
+    int shell_terminal;
+    struct termios shell_tmodes;
+    char *prompt;
+};
+
+void print_version();
+
 
 #ifdef __cplusplus
 } // extern "C"
