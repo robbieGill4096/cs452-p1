@@ -5,6 +5,9 @@
 #include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
+//added imports
+#include <unistd.h>
+
 
 #include <readline/readline.h>
 #include <readline/history.h>
