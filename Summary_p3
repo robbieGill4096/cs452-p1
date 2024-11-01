@@ -1,0 +1,43 @@
+CSC 452/552 Operations Systems
+Project 3 Threads
+Name:Robbie Gill
+Bronco ID:114085011
+Date:11/12/2024
+
+link to project Descripton: https://shanepanter.com/cs452/projects/p5
+
+1.	Project Overview
+In this project I'm tasked with taking an existing single threaded implimentation of merge sort and wrapping it so that it can be run in a multithreaded environment. 
+
+2.	Project Management Plan
+
+    Friday 
+    *start summary 
+    *add source code to project 
+    *review merge sort
+    *review code implimentation
+    *check tests/write tests 
+    *create simplified example
+
+    Saturday
+
+    Sunday
+
+
+    a)	Task 3: Make Thread Safe (15 pts)
+        * Code check
+    b)	Task 4: Driver app (15 pts) 
+        * Snapshots of output
+    c)	Task 5: Task 5 Add bash files (15 pts)
+        * Code check (createplot.sh & graph.plt & data.dat)
+    d)	Task 6: Complete the Analysis (15 pts)
+        * Analysis.md & Graph (Threads vs. Time to sort)
+3.	Project Deliveries
+    a)	How to compile and use my code?
+    b)	Any self-modification?
+    c)	Summary of Results.
+4.	Self-Reflection of Project
+
+5.	Comments for Project (optional)
+
+6.	Use of AI for debugging (optional)
