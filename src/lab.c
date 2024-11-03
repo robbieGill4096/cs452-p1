@@ -146,6 +146,8 @@ void *parallel_mergesort(void *args){
     //create dynamic number of threads
     pthread_t threads[num_thread];
 
+    struct parallel_args *args_array[num_thread]; // Array to store pointers to struct parallel_args
+
     int curOffset=0; //starts at the begining of the array.
     for (int t = 0; t < num_thread; t++) {
 
@@ -154,6 +156,8 @@ void *parallel_mergesort(void *args){
       args->start =curOffset; /* Starting index of the subarray */;
       args->end =(curOffset+subArraySize-1); /* Ending index of the subarray */;
       
+      args_array[t]=args;
+
       pthread_create(&threads[t],  NULL, parallel_mergesort, (void*)args);
       curOffset+=subArraySize;
       //on last iteration we go to the end of the array in the case therese odd number of intial elements
@@ -169,13 +173,10 @@ void *parallel_mergesort(void *args){
       //perform final merge of the sub arrays....
       mergesort_s(A, 0, r);
 
-      //free the memory allocated for the threads 
+      for (int t = 0; t < num_thread; t++) {
+        free(args_array[t]);
+      }
       
-
-      return NULL;
-      
-
-
 
     //free(threads);
 
