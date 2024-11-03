@@ -59,9 +59,62 @@ void test_mergesort_mt_small_three_threads(void)
 
 
 int main(void) {
+
+
+  int MasterArray[] = {1,7,4,3,9,1,2};
+  int num_threads = 3;
+  //mergesort_s(myNumbers,0,6);
+  //printf("\n\n",myNumbers);
+  int MasterArraylength = sizeof(MasterArray) / sizeof(MasterArray[0]);
+
+  int r = MasterArraylength-1;//index of last element
+  int p =0;
+
+  //printf("The length of the array:%d",MasterArraylength);
+
+  int subArraySize= MasterArraylength/num_threads;
+
+  int curOffset=p;
+  //printf("the size of the sub array is: %d, ",subArraySize);
+  for(int i=0;i<(num_threads-1);i++)
+{
+        //printf("%d, ",myNumbers[i]);
+   for(int j=0; j<(subArraySize); j++){
+
+        printf("%d, ",MasterArray[(j+curOffset)]);
+   }
+  curOffset+=subArraySize;
+   printf("\n");
+}
+//for last thread of the loop we go from the current offset to the end of the list 
+for(int k=curOffset;k<=r;k++){
+  printf("%d, ",MasterArray[(k)]);
+
+}
+
+//printf("%d, ",MasterArray[(curOffset)]);
+//printf("%d, ",MasterArray[(1+curOffset)]);
+//printf("%d, ",MasterArray[(2+curOffset)]);
+
+
+
+
+
+
+  for(int i=0;i<MasterArraylength;i++)
+{
+        //printf("%d, ",MasterArray[i]);
+}
+printf("\n");
+mergesort_mt(MasterArray,MasterArraylength,3);
+printf("\n");
+//printf("11/5=%d\n"(11/5));
+
   UNITY_BEGIN();
   RUN_TEST(test_mergesort_mt_small_one_thread);
   RUN_TEST(test_mergesort_mt_small_two_threads);
   RUN_TEST(test_mergesort_mt_small_three_threads);
   return UNITY_END();
+
+
 }

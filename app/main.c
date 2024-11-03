@@ -6,13 +6,15 @@
 int main(int argc, char **argv)
 {
 
+   printf("testadsfdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+
   if (argc < 3)
     {
       printf("usage: %s <array_size> <num_threads>", argv[0]);
       return 1;
     }
-  int size = atoi(argv[1]);
-  int t = atoi(argv[2]);
+  int size = atoi(argv[1]);//parse 
+  int t = atoi(argv[2]);//parse the number of threads
 
   int *A_ = malloc(sizeof(int) *size);
   srandom(1);
@@ -21,7 +23,7 @@ int main(int argc, char **argv)
 
   double end = 0;
   double start = getMilliSeconds();
-  mergesort_mt(A_, size, t);
+  //mergesort_mt(A_, size, t);//mrge sort multithread? 
   end = getMilliSeconds();
   printf("%f %d\n",end-start, t);
 

@@ -106,3 +106,79 @@ double getMilliSeconds()
   gettimeofday(&now, (struct timezone *)0);
   return (double)now.tv_sec * 1000.0 + now.tv_usec / 1000.0;
 }
+
+/**
+ * @brief The function that is called by each thread to sort their chunk
+ *
+ * @param args see struct parallel_args
+ * @return void* always NULL
+ */
+void *parallel_mergesort(void *args){
+  struct parallel_args *pargs = (struct parallel_args *)args;
+  int *A = pargs->A;
+  int start = pargs->start;
+  int end = pargs->end;
+  mergesort_s(A, start, end);
+  //printf("the arguments passed into mergesort:%d %d\n",start,end);
+  return NULL;
+}
+
+  /**
+   * @brief Sorts an array of ints into ascending order using multiple
+   * threads
+   *
+   * @param A A pointer to the start of the array
+   * @param n The size of the array
+   * @param num_threads The number of threads to use.
+   */
+    
+  void mergesort_mt(int *A, int n, int num_thread){
+
+    
+    //int MasterArraylength = n;
+
+    int subArraySize=n/num_thread; //the size of each sub array. 
+
+    int r = n-1;//index of last element.
+    //int p =0; //starting index of the array.
+    //printf("%d",A[0]);
+
+    //create dynamic number of threads
+    pthread_t threads[num_thread];
+
+    int curOffset=0; //starts at the begining of the array.
+    for (int t = 0; t < num_thread; t++) {
+
+      struct parallel_args *args = malloc(sizeof(struct parallel_args));
+      args->A =A; /* Pointer to the integer array */;
+      args->start =curOffset; /* Starting index of the subarray */;
+      args->end =(curOffset+subArraySize-1); /* Ending index of the subarray */;
+      
+      pthread_create(&threads[t],  NULL, parallel_mergesort, (void*)args);
+      curOffset+=subArraySize;
+      //on last iteration we go to the end of the array in the case therese odd number of intial elements
+      if(t==(num_thread-1)){
+        args->end =r;
+        pthread_create(&threads[t],  NULL, parallel_mergesort, (void*)args);
+     
+      }}  
+      //wait for all threads to finish and join them 
+      for (int t = 0; t < num_thread; t++) {
+        pthread_join(threads[t], NULL);
+      }
+      //perform final merge of the sub arrays....
+      mergesort_s(A, 0, r);
+
+      //free the memory allocated for the threads 
+      
+
+      return NULL;
+      
+
+
+
+    //free(threads);
+
+
+
+  }
