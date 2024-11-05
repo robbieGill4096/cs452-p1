@@ -5,9 +5,6 @@
 
 int main(int argc, char **argv)
 {
-
-   printf("testadsfdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-
   if (argc < 3)
     {
       printf("usage: %s <array_size> <num_threads>", argv[0]);
@@ -23,9 +20,9 @@ int main(int argc, char **argv)
 
   double end = 0;
   double start = getMilliSeconds();
-  //mergesort_mt(A_, size, t);//mrge sort multithread? 
+  mergesort_mt(A_, size, t);//mrge sort multithread? 
   end = getMilliSeconds();
   printf("%f %d\n",end-start, t);
-
+  free(A_);
   return 0;
 }
