@@ -34,12 +34,20 @@ In this project I'm tasked with taking an existing single threaded implimentatio
         * Analysis.md & Graph (Threads vs. Time to sort)
 3.	Project Deliveries
     a)	How to compile and use my code?
+        make clean //remove any existing code
+
+        make check  //verify that the code is correct
+
+        make //build source
+
+        ./createplot.sh -s <numer of elements in list> <name_of_plot_file> // test perfomance of the mulithreading sort up to 32 threads 
     b)	Any self-modification?
+        The createplot.sh script had to be modified to run on the current project path, gnuplot was required to be installed to build the graph. 
+
     c)	Summary of Results.
 4.	Self-Reflection of Project
-Overall this project was my favorite we've done so far, the memory layout question on homework3 really helped me get a grasp of how to manipulate the mergesort list efficently and udnerstand the methodoly / design pardigram of the lab.h functions. I was really intrested in this problem because of a similar coding project I'm working on at my job, so I was very motivated to find a good solution. 
+Overall this project was my favorite we've done so far, the memory layout question on homework3 really helped me get a grasp of how to manipulate the mergesort list efficently and understand the methodoly / design pardigram of the lab.h functions. Suprisingly the most difficult part of this project was testing it. I've been developing within github code spaces and found that there are only two available core, which is the same case for my local pc. Leaving me with the option of running the test script on onyx.Even running through onyx the test took a suprising amount of time to execute. 
 
 5.	Comments for Project (optional)
-An idea I had that for improving the speed of the project which I didn't impliment was checking the first and last elements of each sorted chunk, so that the chunks could be rearranged in a more sorted order before the final merge. 
-
+An idea I had that for improving the speed of the project which I didn't impliment was checking the first and last elements of each sorted chunk, so that the chunks could be rearranged in a more sorted order before the final merge. However this approach could reduce the cache locality.
 6.	Use of AI for debugging (optional)
