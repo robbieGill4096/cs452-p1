@@ -3,6 +3,9 @@ Once you have completed all the tasks create a file named Analysis.md and add a 
 In this section you will need to include your graph as an image so it will display when viewed on github.com. 
 You will then need to talk about your results. Your discussion should be at least 500 words.
 
+
+ ##Analysis
+
 ![Graph of threads vs time for multi-threaded implimentation of mergesort](student_plot.png)
 Were you able to generate something close to what the example showed? Why or why not.
 Did you see a slow down at some point why or why not?
