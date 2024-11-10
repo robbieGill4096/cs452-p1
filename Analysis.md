@@ -21,3 +21,4 @@ What was the optimum number of threads for your machine?
 What was the slowest number of threads for your machine?
 
 1 thread. The greatest increase was from 1 thread to 2 nearly doubling perfomance.after that each thread seemed to add logarithmic diminishing returns up until the physical number of seperate avaialble processors was reached. 
+Like stated above if the number of elements n was much smaller 1 thread could be the fastest if n was small enough. Or if the elements are already in nearly sorted order. 
