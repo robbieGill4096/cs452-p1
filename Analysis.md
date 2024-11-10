@@ -1,21 +1,14 @@
 Task 6 - Complete the Analysis (ABET Outcome 1)
-Once you have completed all the tasks create a file named Analysis.md and add a new section named ## Analysis to the bottom of the document. 
-In this section you will need to include your graph as an image so it will display when viewed on github.com. 
-You will then need to talk about your results. Your discussion should be at least 500 words.
-
 
  ## Analysis
 
 ![Graph of threads vs time for multi-threaded implimentation of mergesort](student_plot.png)
+
 Were you able to generate something close to what the example showed? Why or why not.
 Did you see a slow down at some point why or why not?
 
-Yes the graph I was able to create looked very similar to the one shown. I tested my code on the Boise State ONYX cluster
-so I had a larger number of threads to work with than shanes Mac book. So my graph closly resembled Shanes until around 9 threads which seemed to be the limit for for his M1 Macbook
-where in my case ONYX still had plently of free threads so my graph continued to speed up linearly positive with some small deviation.
-
-There were some marginal slow downs, I would attribute to the load of other students working in the labs on the cluster. 
-If I were to test it again perhaps running it very early or late perhaps I could get a faster performance.
+The graph I was able to create looked very similar to the one shown. I tested my code on the Boise State ONYX cluster. I did this because my local pc aswell as github codespaces only support up to 2 parallel threads. 
+Onyx supports up to 32 seperate threads, so I had a larger number of threads to work with than shanes Mac book. This explains the positive difference in performance on my tests compared to shanes loss of speed starting around 9 threads which seemed to be the limit for for his M1 Macbook. where in my case Onyx still had plently of free threads so my graph continued to speed up linearly positive with some small deviation up until 32 threads running in parallel. There were some marginal slow downs, I would attribute to the load of other students working in the labs on the cluster. If I were to test it again perhaps running it very early or late perhaps I could get a faster performance.
 
 Did your program run faster and faster when you added more threads? Why or why not?
 
