@@ -29,12 +29,13 @@ In this project I'm tasked with taking an existing single threaded implimentatio
     b)	Task 4: Driver app (15 pts) 
         * Snapshots of output
         ![snapshots of output with varying numbers of threads](Task4testing.png)
-    c)	Task 5: Task 5 Add bash files (15 pts)
+
+  	 c)	Task 5: Task 5 Add bash files (15 pts)
         * Code check (createplot.sh & graph.plt & data.dat)
     d)	Task 6: Complete the Analysis (15 pts)
         * Analysis.md & Graph (Threads vs. Time to sort)
         ![Link to the Analysis](Analysis.md)
-3.	Project Deliveries
+4.	Project Deliveries
     a)	How to compile and use my code?
         make clean //remove any existing code
 
@@ -47,9 +48,9 @@ In this project I'm tasked with taking an existing single threaded implimentatio
         The createplot.sh script had to be modified to run on the current project path, gnuplot was required to be installed to build the graph. 
 
     c)	Summary of Results.
-4.	Self-Reflection of Project
+5.	Self-Reflection of Project
 Overall this project was my favorite we've done so far, the memory layout question on homework3 really helped me get a grasp of how to manipulate the mergesort list efficently and understand the methodoly / design pardigram of the lab.h functions. Suprisingly the most difficult part of this project was testing it. I've been developing within github code spaces and found that there are only two available core, which is the same case for my local pc. Leaving me with the option of running the test script on onyx.Even running through onyx the test took a suprising amount of time to execute. 
 
-5.	Comments for Project (optional)
+6.	Comments for Project (optional)
 An idea I had that for improving the speed of the project which I didn't impliment was checking the first and last elements of each sorted chunk, so that the chunks could be rearranged in a more sorted order before the final merge. However this approach could reduce the cache locality.
-6.	Use of AI for debugging (optional)
+7.	Use of AI for debugging (optional)
