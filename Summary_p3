@@ -28,10 +28,12 @@ In this project I'm tasked with taking an existing single threaded implimentatio
         * Code check
     b)	Task 4: Driver app (15 pts) 
         * Snapshots of output
+        ![snapshots of output with varying numbers of threads](Task4testing.png)
     c)	Task 5: Task 5 Add bash files (15 pts)
         * Code check (createplot.sh & graph.plt & data.dat)
     d)	Task 6: Complete the Analysis (15 pts)
         * Analysis.md & Graph (Threads vs. Time to sort)
+        ![Link to the Analysis](Analysis.md)
 3.	Project Deliveries
     a)	How to compile and use my code?
         make clean //remove any existing code
