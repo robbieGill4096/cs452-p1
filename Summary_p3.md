@@ -34,6 +34,7 @@ In this project I'm tasked with taking an existing single threaded implimentatio
         * Code check (createplot.sh & graph.plt & data.dat)
     d)	Task 6: Complete the Analysis (15 pts)
         * Analysis.md & Graph (Threads vs. Time to sort)
+  	
         ![Link to the Analysis](Analysis.md)
 4.	Project Deliveries
     a)	How to compile and use my code?
