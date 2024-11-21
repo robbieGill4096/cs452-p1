@@ -19,6 +19,7 @@ EXE_OBJS := $(EXE_SRCS:%=$(BUILD_DIR)/%.o)
 EXE_DEPS := $(EXE_OBJS:.o=.d)
 
 CFLAGS ?= -Wall -Wextra -fno-omit-frame-pointer -fsanitize=address -g -MMD -MP -I./src
+#CFLAGS ?= -Wall -Wextra -fno-omit-frame-pointer -fsanitize=address -g -std=gnu99
 LDFLAGS ?= -pthread -lreadline
 
 all: $(TARGET_EXEC) $(TARGET_TEST)

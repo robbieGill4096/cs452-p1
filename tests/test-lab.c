@@ -141,6 +141,14 @@ int main(void) {
   srand(seed);
   printf("Running memory tests.\n");
 
+  //implimentbtok - bytes to kilobytes
+  
+
+
+  //struct buddy_pool pool;
+
+  //buddy_init(&pool, 512);
+
 //page 442 of art of computer programming describes buddy algo pdf 457
   //UNITY_BEGIN();
   //RUN_TEST(test_buddy_init);
