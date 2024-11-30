@@ -1,9 +1,12 @@
+#define _GNU_SOURCE
 #include <stddef.h>
 #include <math.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #include <errno.h>
-DEFAULT_K;
+#include "../src/lab.h"
+#include <bits/mman-linux.h>
+
 //avail;
 //buddy_pool pool;
 /**
@@ -83,8 +86,8 @@ DEFAULT_K;
     struct avail *ptr = (struct avail *) pool->base; //lots of strategic casting
     ptr->tag = BLOCK_AVAIL;
     ptr->kval = pool->kval_m;
-    ptr->next = &pool->avail[pool->kval_m]
-    ptr=prev = &pool->avail[pool->kval_m];
+    ptr->next = &pool->avail[pool->kval_m];
+    ptr->prev = &pool->avail[pool->kval_m];
 
 
   }
