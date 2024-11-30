@@ -7,6 +7,20 @@
 #include "../src/lab.h"
 #include <bits/mman-linux.h>
 
+
+
+
+/**
+   * Find the buddy of a given pointer and kval relative to the base address we got from mmap
+   * @param pool The memory pool to work on (needed for the base addresses)
+   * @param buddy The memory block that we want to find the buddy for
+   * @return A pointer to the buddy
+   */
+struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
+    uintptr_t addr = (uintptr_t)buddy - (uintptr_t)pool->base;
+    uintptr_t buddy_addr = addr ^ (UINT64_C(1) << buddy->kval);
+    return (struct avail *)((uintptr_t)pool->base + buddy_addr);
+}
 //avail;
 //buddy_pool pool;
 /**
@@ -107,7 +121,46 @@
    * @param pool The memory pool
    * @param ptr Pointer to the memory block to free
    */
-  void buddy_free(struct buddy_pool *pool, void *ptr){}
+  void buddy_free(struct buddy_pool *pool, void *ptr){
+    if (ptr == NULL) {
+            return;
+        }
+
+        // Calculate the block's address and size
+        struct avail *block = (struct avail *)ptr;
+        size_t kval = block->kval;
+
+        // Mark the block as free
+        block->tag = BLOCK_AVAIL;
+
+        // Attempt to merge with buddy if possible
+        while (kval < pool->kval_m) {
+            struct avail *buddy = buddy_calc(pool, block);
+            if (buddy->tag != BLOCK_AVAIL || buddy->kval != kval) {
+                break;
+            }
+
+            // Remove buddy from the free list
+            buddy->prev->next = buddy->next;
+            buddy->next->prev = buddy->prev;
+
+            // Merge the block and buddy
+            if (block > buddy) {
+                struct avail *temp = block;
+                block = buddy;
+                buddy = temp;
+            }
+
+            block->kval++;
+            kval = block->kval;
+        }
+
+        // Add the merged block to the free list
+        block->next = pool->avail[kval].next;
+        block->prev = &pool->avail[kval];
+        pool->avail[kval].next->prev = block;
+        pool->avail[kval].next = block;
+}
 
     /**
    * Allocates a block of size bytes of memory, returning a pointer to
@@ -121,7 +174,51 @@
    * @param size The size of the user requested memory block in bytes
    * @return A pointer to the memory block
    */
-  void *buddy_malloc(struct buddy_pool *pool, size_t size){}
+  void *buddy_malloc(struct buddy_pool *pool, size_t size){    if (size == 0 || pool == NULL) {
+          return NULL;
+      }
+
+      // Calculate the required block size
+      size_t required_k = btok(size + sizeof(struct avail));
+      if (required_k < SMALLEST_K) {
+          required_k = SMALLEST_K;
+      }
+
+      // Find a suitable block
+      size_t k = required_k;
+      while (k <= pool->kval_m && pool->avail[k].next == &pool->avail[k]) {
+          k++;
+      }
+
+      if (k > pool->kval_m) {
+          // No suitable block found
+          return NULL;
+      }
+
+      // Split larger blocks if necessary
+      struct avail *block = pool->avail[k].next;
+      while (k > required_k) {
+          k--;
+          struct avail *buddy = (struct avail *)((uintptr_t)block + (UINT64_C(1) << k));
+          buddy->tag = BLOCK_AVAIL;
+          buddy->kval = k;
+          buddy->next = pool->avail[k].next;
+          buddy->prev = &pool->avail[k];
+          pool->avail[k].next->prev = buddy;
+          pool->avail[k].next = buddy;
+      }
+
+      // Remove the block from the free list
+      block->prev->next = block->next;
+      block->next->prev = block->prev;
+
+      // Mark the block as reserved
+      block->tag = BLOCK_RESERVED;
+      block->kval = required_k;
+
+      // Return the pointer to the allocated block
+      return (void *)((uintptr_t)block + sizeof(struct avail));
+}
 
  /**
    * Inverse of buddy_init.

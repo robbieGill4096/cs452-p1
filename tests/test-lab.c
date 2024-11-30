@@ -150,10 +150,10 @@ int main(void) {
   //buddy_init(&pool, 512);
 
 //page 442 of art of computer programming describes buddy algo pdf 457
-  //UNITY_BEGIN();
-  //RUN_TEST(test_buddy_init);
-  //RUN_TEST(test_buddy_malloc_one_byte);
-  //RUN_TEST(test_buddy_malloc_one_large);
+  UNITY_BEGIN();
+  RUN_TEST(test_buddy_init);
+  RUN_TEST(test_buddy_malloc_one_byte);
+  RUN_TEST(test_buddy_malloc_one_large);
 
 return UNITY_END();
 }
