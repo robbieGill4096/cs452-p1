@@ -62,11 +62,11 @@
     //you can take your buddy system and hijack normal malloc
     if (size ==0){size=UINT64_C(1) << DEFAULT_K;}
     pool->kval_m = btok(size); //storing mazinum size k value
-    pool->numbytes = UNIT64_C(1) << pool->kval_m;
+    pool->numbytes = UINT64_C(1) << pool->kval_m;
     //now use mmap to allocate memory
     pool->base = mmap(NULL, pool->numbytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (pool->base == MAP_FAILED) {
-        perror("buddy: couldnt not allocate memory pool!")
+        perror("buddy: couldnt not allocate memory pool!");
     }
     for(int i = 0; i <pool->kval_m; i++){
       //empty circular list
