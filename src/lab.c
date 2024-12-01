@@ -82,7 +82,7 @@ struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
     if (pool->base == MAP_FAILED) {
         perror("buddy: couldnt not allocate memory pool!");
     }
-    for(int i = 0; i <pool->kval_m; i++){
+    for(size_t i = 0; i <pool->kval_m; i++){
       //empty circular list
       //array of ciricular lists
       pool->avail[i].next = &pool->avail[i];
