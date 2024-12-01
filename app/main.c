@@ -6,7 +6,7 @@
 
 int main(void)
 {
-  char *line = (char *)NULL;
+  //char *line = (char *)NULL;
   //char *version = getVersion();
   //line = readline("What is your name?");
   //printf("Hello %s! This is the starter template version: %s\n", line, version);

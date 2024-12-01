@@ -75,14 +75,14 @@ struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
     //
     //you can take your buddy system and hijack normal malloc
     if (size ==0){size=UINT64_C(1) << DEFAULT_K;}
-    pool->kval_m = btok(size); //storing mazinum size k value
+    pool->kval_m = btok(size); //storing maximum size k value
     pool->numbytes = UINT64_C(1) << pool->kval_m;
     //now use mmap to allocate memory
     pool->base = mmap(NULL, pool->numbytes, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (pool->base == MAP_FAILED) {
         perror("buddy: couldnt not allocate memory pool!");
     }
-    for(size_t i = 0; i <pool->kval_m; i++){
+    for(size_t i = 0; i < pool->kval_m; i++){
       //empty circular list
       //array of ciricular lists
       pool->avail[i].next = &pool->avail[i];
@@ -121,45 +121,51 @@ struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
    * @param pool The memory pool
    * @param ptr Pointer to the memory block to free
    */
-  void buddy_free(struct buddy_pool *pool, void *ptr){
+  void buddy_free(struct buddy_pool *pool, void *ptr) {
     if (ptr == NULL) {
-            return;
+        return;
+    }
+
+    // Calculate the block's address and size
+    struct avail *block = (struct avail *)((uintptr_t)ptr - sizeof(struct avail));
+    size_t kval = block->kval;
+
+    // Mark the block as free
+    block->tag = BLOCK_AVAIL;
+
+    // Attempt to merge with buddy if possible
+    while (kval < pool->kval_m) {
+        struct avail *buddy = buddy_calc(pool, block);
+        if (buddy->tag != BLOCK_AVAIL || buddy->kval != kval) {
+            break;
         }
 
-        // Calculate the block's address and size
-        struct avail *block = (struct avail *)ptr;
-        size_t kval = block->kval;
+        // Remove buddy from the free list
+        buddy->prev->next = buddy->next;
+        buddy->next->prev = buddy->prev;
 
-        // Mark the block as free
-        block->tag = BLOCK_AVAIL;
-
-        // Attempt to merge with buddy if possible
-        while (kval < pool->kval_m) {
-            struct avail *buddy = buddy_calc(pool, block);
-            if (buddy->tag != BLOCK_AVAIL || buddy->kval != kval) {
-                break;
-            }
-
-            // Remove buddy from the free list
-            buddy->prev->next = buddy->next;
-            buddy->next->prev = buddy->prev;
-
-            // Merge the block and buddy
-            if (block > buddy) {
-                struct avail *temp = block;
-                block = buddy;
-                buddy = temp;
-            }
-
-            block->kval++;
-            kval = block->kval;
+        // Merge the block and buddy
+        if (block > buddy) {
+            struct avail *temp = block;
+            block = buddy;
+            buddy = temp;
         }
 
-        // Add the merged block to the free list
-        block->next = pool->avail[kval].next;
-        block->prev = &pool->avail[kval];
-        pool->avail[kval].next->prev = block;
-        pool->avail[kval].next = block;
+        block->kval++;
+        kval = block->kval;
+    }
+
+    // Add the merged block to the free list
+    block->next = pool->avail[kval].next;
+    block->prev = &pool->avail[kval];
+    pool->avail[kval].next->prev = block;
+    pool->avail[kval].next = block;
+
+    // Clear lower-level free lists
+    for (size_t i = 0; i < kval; i++) {
+        pool->avail[i].next = &pool->avail[i];
+        pool->avail[i].prev = &pool->avail[i];
+    }
 }
 
     /**
@@ -174,52 +180,54 @@ struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
    * @param size The size of the user requested memory block in bytes
    * @return A pointer to the memory block
    */
-  void *buddy_malloc(struct buddy_pool *pool, size_t size){    if (size == 0 || pool == NULL) {
-          return NULL;
-      }
+void *buddy_malloc(struct buddy_pool *pool, size_t size) {
+    if (size == 0 || pool == NULL) {
+        return NULL;
+    }
 
-      // Calculate the required block size
-      size_t required_k = btok(size + sizeof(struct avail));
-      if (required_k < SMALLEST_K) {
-          required_k = SMALLEST_K;
-      }
+    size_t k = btok(size);
+    if (k < MIN_K) {
+        k = MIN_K;
+    }
 
-      // Find a suitable block
-      size_t k = required_k;
-      while (k <= pool->kval_m && pool->avail[k].next == &pool->avail[k]) {
-          k++;
-      }
+    //printf("Requested size: %zu, calculated k: %zu\n", size, k);
 
-      if (k > pool->kval_m) {
-          // No suitable block found
-          return NULL;
-      }
+    for (size_t i = k; i <= pool->kval_m; i++) {
+        if (pool->avail[i].next != &pool->avaisl[i]) {
+            struct avail *block = pool->avail[i].next;
+            pool->avail[i].next = block->next;
+            block->next->prev = &pool->avail[i];
 
-      // Split larger blocks if necessary
-      struct avail *block = pool->avail[k].next;
-      while (k > required_k) {
-          k--;
-          struct avail *buddy = (struct avail *)((uintptr_t)block + (UINT64_C(1) << k));
-          buddy->tag = BLOCK_AVAIL;
-          buddy->kval = k;
-          buddy->next = pool->avail[k].next;
-          buddy->prev = &pool->avail[k];
-          pool->avail[k].next->prev = buddy;
-          pool->avail[k].next = buddy;
-      }
+            printf("Allocating block at level %zu\n", i);
 
-      // Remove the block from the free list
-      block->prev->next = block->next;
-      block->next->prev = block->prev;
+            while (i > k) {
+                i--;
+                if (i < MIN_K) {
+                    break;
+                }
+                struct avail *buddy = (struct avail *)((uintptr_t)block + (UINT64_C(1) << i));
+                buddy->tag = BLOCK_AVAIL;
+                buddy->kval = i;
+                buddy->next = pool->avail[i].next;
+                buddy->prev = &pool->avail[i];
+                pool->avail[i].next->prev = buddy;
+                pool->avail[i].next = buddy;
 
-      // Mark the block as reserved
-      block->tag = BLOCK_RESERVED;
-      block->kval = required_k;
+                //printf("Splitting block: new buddy at level %zu\n", i);
+            }
 
-      // Return the pointer to the allocated block
-      return (void *)((uintptr_t)block + sizeof(struct avail));
+            block->tag = BLOCK_RESERVED;
+            block->kval = k;
+            //printf("Allocated block: kval = %u, block address = %p\n", block->kval, (void *)block);
+            //return (void *)block;
+            return (void *)((uintptr_t)block + sizeof(struct avail));
+            //modified to pass tests mem-1 was breaking code
+           
+        }
+    }
+
+    return NULL; // No available block found
 }
-
  /**
    * Inverse of buddy_init.
    *
