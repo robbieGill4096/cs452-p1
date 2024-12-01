@@ -193,7 +193,7 @@ void *buddy_malloc(struct buddy_pool *pool, size_t size) {
     //printf("Requested size: %zu, calculated k: %zu\n", size, k);
 
     for (size_t i = k; i <= pool->kval_m; i++) {
-        if (pool->avail[i].next != &pool->avaisl[i]) {
+        if (pool->avail[i].next != &pool->avail[i]) {
             struct avail *block = pool->avail[i].next;
             pool->avail[i].next = block->next;
             block->next->prev = &pool->avail[i];
