@@ -168,6 +168,63 @@ struct avail *buddy_calc(struct buddy_pool *pool, struct avail *buddy) {
     }
 }
 
+  /**
+   * Changes the size of the memory block pointed to by ptr.
+   * The function may move the memory block to a new location
+   * (whose address is returned by the function).
+   * The content of the memory block is preserved up to the
+   * lesser of the new and old sizes, even if the block is
+   * moved to a new location. If the new size is larger,
+   * the value of the newly allocated portion is indeterminate.
+   *
+   * In case that ptr is a null pointer, the function behaves
+   * like malloc, assigning a new block of size bytes and
+   * returning a pointer to its beginning.
+   *
+   * if size is equal to zero, and ptr is not NULL, then the  call
+   * is equivalent to free(ptr)
+   *
+   * @param pool The memory pool
+   * @param ptr Pointer to a memory block
+   * @param size The new size of the memory block
+   * @return Pointer to the new memory block
+   */
+void *buddy_realloc(struct buddy_pool *pool, void *ptr, size_t size) {
+    if (ptr == NULL) {
+        return buddy_malloc(pool, size);
+    }
+
+    if (size == 0) {
+        buddy_free(pool, ptr);
+        return NULL;
+    }
+
+    struct avail *block = (struct avail *)((uintptr_t)ptr - sizeof(struct avail));
+    size_t k = btok(size);
+    if (k < MIN_K) {
+        k = MIN_K;
+    }
+
+    if (block->kval == k) {
+        return ptr;
+    }
+
+    void *new_ptr = buddy_malloc(pool, size);
+    if (new_ptr == NULL) {
+        return NULL;
+    }
+
+    size_t copy_size = (UINT64_C(1) << block->kval) - sizeof(struct avail);
+    if (size < copy_size) {
+        copy_size = size;
+    }
+
+    memcpy(new_ptr, ptr, copy_size);
+    buddy_free(pool, ptr);
+    return new_ptr;
+}
+
+
     /**
    * Allocates a block of size bytes of memory, returning a pointer to
    * the beginning of the block. The content of the newly allocated block

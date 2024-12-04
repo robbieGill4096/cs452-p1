@@ -59,6 +59,41 @@ void check_buddy_pool_empty(struct buddy_pool *pool)
       assert(pool->avail[i].kval == i);
     }
 }
+/**
+ * Added Test case
+ * 
+ */
+void test_buddy_realloc(void) {
+    fprintf(stderr, "->Testing buddy realloc\n");
+
+    struct buddy_pool pool;
+    size_t initial_size = UINT64_C(1) << MIN_K;
+    buddy_init(&pool, initial_size);
+
+    // Allocate a small block
+    size_t alloc_size = 32;  // Requesting 32 bytes
+    void *ptr = buddy_malloc(&pool, alloc_size);
+    assert(ptr != NULL);
+
+    // Resize the block to a larger size
+    size_t new_size = 64;  // Resizing to 64 bytes
+    void *new_ptr = buddy_realloc(&pool, ptr, new_size);
+    assert(new_ptr != NULL);
+    assert(((struct avail *)((uintptr_t)new_ptr - sizeof(struct avail)))->kval >= btok(new_size));
+
+    // Resize the block to a smaller size
+    size_t smaller_size = 16;  // Resizing to 16 bytes
+    void *smaller_ptr = buddy_realloc(&pool, new_ptr, smaller_size);
+    assert(smaller_ptr != NULL);
+
+    // Free the resized block
+    buddy_free(&pool, smaller_ptr);
+
+    // Ensure the pool is back to its initial state
+    check_buddy_pool_full(&pool);
+
+    buddy_destroy(&pool);
+}
 
 /**
  * Test allocating 1 byte to make sure we split the blocks all the way down
@@ -145,5 +180,6 @@ int main(void) {
   RUN_TEST(test_buddy_init);
   RUN_TEST(test_buddy_malloc_one_byte);
   RUN_TEST(test_buddy_malloc_one_large);
+  RUN_TEST(test_buddy_realloc);
 return UNITY_END();
 }
