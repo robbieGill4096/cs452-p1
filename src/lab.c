@@ -242,7 +242,7 @@ void *buddy_malloc(struct buddy_pool *pool, size_t size) {
         return NULL;
     }
 
-    size_t k = btok(size);
+    size_t k = btok(size); 
     if (k < MIN_K) {
         k = MIN_K;
     }
@@ -255,13 +255,14 @@ void *buddy_malloc(struct buddy_pool *pool, size_t size) {
             pool->avail[i].next = block->next;
             block->next->prev = &pool->avail[i];
 
-            printf("Allocating block at level %zu\n", i);
+            //printf("Allocating block at level %zu\n", i);
 
-            while (i > k) {
+            while (i > k) { //continue to split until reached desired size
                 i--;
                 if (i < MIN_K) {
                     break;
                 }
+                //split the block
                 struct avail *buddy = (struct avail *)((uintptr_t)block + (UINT64_C(1) << i));
                 buddy->tag = BLOCK_AVAIL;
                 buddy->kval = i;
@@ -297,7 +298,7 @@ void *buddy_malloc(struct buddy_pool *pool, size_t size) {
 
     int status = munmap(pool->base, pool->numbytes);
     if(status == -1){
-      perror("buddy: destroy failed!");
+      perror("buddy: destroy failed! returning -1");
     }
   }
 

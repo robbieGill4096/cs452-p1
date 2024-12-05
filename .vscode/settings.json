@@ -6,6 +6,9 @@
         "readline.h": "c",
         "lab.h": "c",
         "cerrno": "c",
-        "pwd.h": "c"
+        "pwd.h": "c",
+        "mman-linux.h": "c",
+        "errno.h": "c",
+        "stdio.h": "c"
     }
 }

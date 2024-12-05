@@ -60,8 +60,8 @@ void check_buddy_pool_empty(struct buddy_pool *pool)
     }
 }
 /**
- * Added Test case
- * 
+ * Added Test case for buddy_realloc
+ * allocates a block of memory, and then realllocates it to a larger size.
  */
 void test_buddy_realloc(void) {
     fprintf(stderr, "->Testing buddy realloc\n");
@@ -71,12 +71,12 @@ void test_buddy_realloc(void) {
     buddy_init(&pool, initial_size);
 
     // Allocate a small block
-    size_t alloc_size = 32;  // Requesting 32 bytes
+    size_t alloc_size = 64;  // Requesting 32 bytes
     void *ptr = buddy_malloc(&pool, alloc_size);
     assert(ptr != NULL);
 
     // Resize the block to a larger size
-    size_t new_size = 64;  // Resizing to 64 bytes
+    size_t new_size = 128;  // Resizing to 64 bytes
     void *new_ptr = buddy_realloc(&pool, ptr, new_size);
     assert(new_ptr != NULL);
     assert(((struct avail *)((uintptr_t)new_ptr - sizeof(struct avail)))->kval >= btok(new_size));
